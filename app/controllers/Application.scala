@@ -10,8 +10,19 @@ object Application extends Controller {
     Ok(views.html.index("Pennis"))
   }
 
-  def uploadFile = Action(parse.multipartFormData) {
+
+  def uploadFile = Action(parse.anyContent) {
     request => {
+
+      request.body.asRaw match{
+        case Some(bytes) => {
+          val filebites = bytes.asFile
+
+
+          Ok("Nice")
+        }
+      }
+      /*
       request.body.file("fileUpload").map {
         image =>
           val imageFileName = image.filename
@@ -21,6 +32,7 @@ object Application extends Controller {
       }.getOrElse{
         BadRequest("No upload bitch")
       }
+      */
   }
 }
 }
