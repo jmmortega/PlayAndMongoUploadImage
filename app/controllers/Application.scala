@@ -2,7 +2,12 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import java.io.File
+import java.io._
+import javax.imageio.{ImageReader, ImageIO}
+import play.api.libs.Files
+import java.net.URLConnection
+import scala.Some
+
 
 object Application extends Controller {
   
@@ -13,10 +18,26 @@ object Application extends Controller {
 
   def uploadFile = Action(parse.anyContent) {
     request => {
+        request.body.asRaw match{
+          case Some(bytes) => {
+            val srcimagefile = bytes.asFile
 
-      request.body.asRaw match{
-        case Some(bytes) => {
-          val filebites = bytes.asFile
+            val is = new BufferedInputStream(new FileInputStream(srcimagefile))
+            val mimeType = URLConnection.guessContentTypeFromStream(is)
+
+            var extension : String = ""
+            mimeType match{
+              case "image/jpeg" => extension = "jpg"
+              case "image/png"  => extension = "png"
+            }
+
+            val destimageFile = new File("/home/images/pennis." + extension)
+            is.close()
+
+            Files.moveFile(srcimagefile , destimageFile , true)
+
+            val pennis = "Pennis!"
+
 
 
           Ok("Nice")
