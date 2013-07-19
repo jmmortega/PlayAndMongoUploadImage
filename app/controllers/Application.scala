@@ -12,6 +12,7 @@ import com.mongodb.casbah.gridfs.GridFS
 import com.mongodb.casbah.commons.MongoDBObject
 import com.mongodb.casbah.Imports._
 import scala.Some
+import play.api.libs.Files.TemporaryFile
 
 
 object Application extends Controller {
@@ -75,6 +76,20 @@ object Application extends Controller {
     val bytes = fileToBytes(is)
 
     Ok(bytes)
+
+  }
+
+  def loadFileTemp(id : String) = Action {
+    val mongo = MongoConnection()("test")
+    val gridfs = GridFS(mongo)
+
+    var gsFile = gridfs.find(new ObjectId(id))
+
+    val is = gsFile.inputStream
+
+    val bytes = fileToBytes(is)
+
+    Ok(bytes).as("image/jpg")
 
   }
 
